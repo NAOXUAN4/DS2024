@@ -1,10 +1,5 @@
-#include <bits/stdc++.h>
+#include "vector.h"
 using namespace std;
 
-int main() 
-{
-    cout<<"Hello World"<<endl;
+template <typename T> //自定义元素类型
 
-
-    return 0;
-}
