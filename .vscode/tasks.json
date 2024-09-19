@@ -1,6 +1,18 @@
 {
     "tasks": [
         {
+            "type": "shell",
+            "label": "删除旧的exe文件",
+            "command": "del",
+            "args": [
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": []
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: g++.exe 生成活动文件",
             "command": "E:\\w64devkit\\bin\\g++.exe",
@@ -9,14 +21,13 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I${workspaceFolder}"
             ],
             "options": {
                 "cwd": "${fileDirname}"
             },
-            "problemMatcher": [
-                "$g++"
-            ],
+            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
