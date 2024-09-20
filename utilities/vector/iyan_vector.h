@@ -50,6 +50,7 @@ public:
     ~Vector() {delete [] _elem;}  //释放储存空间
 
     //只读访问接口
+    void push_Back(T const& e);  //添加元素
     Rank size() const {return _size;} //查询规模
     bool empty() const {return !_size;} //查询是否为空
     int disordered() const;     //向量是否排序过标志位
@@ -77,7 +78,7 @@ public:
     void unsort(Rank lo, Rank hi); //区间打乱， lo -> hi
     void unsort() {unsort(0,_size);}  //整体打乱
 
-    int depduplicate();  //无序去重
+    int deduplicate();  //无序去重
     int uniquify(); //有序去重
 
     //遍历
@@ -86,10 +87,20 @@ public:
 
 };
 
+
+/*-------------------------------------------------------
+* 函数名称：push_Back(T const& e)
+* 函数功能：向量尾部增加元素
+*/
+template <typename T> void Vector<T>::push_Back(T const& value){  //添加元素
+    if (_size == _capacity) expand();   //需要扩容
+    _elem[_size++] = value;
+}
+
 /*------------------------------------------------------
 函数名称：copyFrom(T const* A, Rank lo, Rank hi)
 函数功能：拷贝向量
-------------------------------------------------------*/
+*/
 template <typename T>void Vector<T>::copyFrom(T const* A, Rank lo, Rank hi){  //数组区间复制 lo -> hi   
 /*template <typename T>         void     Vector<T>::                copyFrom(T const* A, Rank lo, Rank hi）*/      
 /*自定义数据类型（int，char）    返回空    类外部定义函数的作用域声明     函数名                  参数         */
@@ -104,7 +115,7 @@ template <typename T>void Vector<T>::copyFrom(T const* A, Rank lo, Rank hi){  //
 /*------------------------------------------------------
 函数名称：operator=(Vector<T> const& V)
 函数功能：重载赋值运算符
-------------------------------------------------------*/
+*/
 template <typename T>Vector<T>& Vector<T>::operator=(Vector<T> const& V){  //用成员函数方法，重载运算符
     if (_elem) delete [] _elem;  //释放对象原有的空间
     copyFrom(V._elem,0,V._size); //对已经清空的空间，整体赋值
@@ -114,8 +125,9 @@ template <typename T>Vector<T>& Vector<T>::operator=(Vector<T> const& V){  //用
 /*------------------------------------------------------
 函数名称：operator[](Rank r)
 函数功能：重载[]运算符
-------------------------------------------------------*/
+*/
 template <typename T> T& Vector<T>::operator[](Rank r) const{  // ！！！ T&指定索引的元素，使得可以通过改变如：v[i]来直接改变向量元素，而不只是一个拷贝
+    if (r < 0 || r >= _size) throw std::out_of_range("Index out of range");
     return _elem[r];  //返回对应索引的元素
 }
 
@@ -125,7 +137,7 @@ template <typename T> T& Vector<T>::operator[](Rank r) const{  // ！！！ T&�
 /*------------------------------------------------------
 函数名称：expand()
 函数功能：扩容
-------------------------------------------------------*/
+*/
 template <typename T> void Vector<T>::expand(){  //扩容函数
     if (_size < _capacity) return; //容量未满，无需扩容
     if (_capacity < DEFAULT_CAPACITY) _capacity = DEFAULT_CAPACITY; //如果当前空间小于默认空间，扩容到默认大小
@@ -137,7 +149,7 @@ template <typename T> void Vector<T>::expand(){  //扩容函数
 /*------------------------------------------------------
 函数名称：shrink()
 函数功能：缩容
-------------------------------------------------------*/
+*/
 template <typename T> void Vector<T>::shrink(){
     if (_capacity < DEFAULT_CAPACITY << 1) return;  //不至于缩容到默认容量（<<2联系上文是默认预留冗余）
     if (_size << 2 > _capacity) return;  //内容已经达到容器设计极限的1/4，无需缩容
@@ -150,7 +162,7 @@ template <typename T> void Vector<T>::shrink(){
 /*------------------------------------------------------
 函数名称：premute(Vector<T>& V)
 函数功能：置乱函数核心
-------------------------------------------------------*/
+*/
 template <typename T> void premute(Vector<T>& V){   //参数：直接填入待排序向量名称，即为一个vector类型的应引用
     for (int i = V._size; i>0; i--)               //从后向前
         swap(V[i-1], V[rand() % i]);            //把当前索引的元素和随机索引的元素交换  随机原理：rand() % i 永不超过 i，即为 0 ~ i-1
@@ -159,7 +171,7 @@ template <typename T> void premute(Vector<T>& V){   //参数：直接填入待�
 /*------------------------------------------------------
 函数名称：unsort(Rank lo, Rank hi)
 函数功能：区间置乱函数接口
-------------------------------------------------------*/
+*/
 template <typename T> void Vector<T>::unsort(Rank lo, Rank hi){
     premute(Vector<T>(_elem + lo, hi - lo));    //对核心传入待置乱的区间组成的子函数  参数：区间首地址，子区间Rank
 }
@@ -168,7 +180,7 @@ template <typename T> void Vector<T>::unsort(Rank lo, Rank hi){
 /*------------------------------------------------------
 函数名称：
 函数功能：重载 ‘==’，‘<’,'>'  判等和比较器
-------------------------------------------------------*/
+*/
 //泛用性考虑 1，3为指针版本，接收指针，在函数里面解指针，再调用重载的引用版本
 template <typename T>static bool lt(T* a, T* b){return lt(*a,*b);}  //比较（小于）
 template <typename T>static bool lt(T& a,T& b){return a < b;} 
@@ -177,6 +189,92 @@ template <typename T>static bool eq(T* a, T* b){return eq(*a,*b);} //判等
 template <typename T>static bool eq(T& a,T& b){return a == b;}
 
 
+/*------------------------------------------------------
+函数名称：find(T const& e, Rank lo, Rank hi) const
+函数功能：无序向量的顺序查找
+*/
+template <typename T> Rank Vector<T>::find(T const& e, Rank lo, Rank hi) const{       //要查找的元素引用（可以是结构体等较大的数据类型，用引用节省空间），查找区间
+    while((lo < hi--) && (e!=_elem[hi]));   //从hi末尾向前查找
+    return hi;  //返回查找到的索引，若无，返回-1
+}
+
+/*---------------------------------------------------------
+* 函数名称：insert(Rank r, T const& e)    //rank，value
+* 函数功能：插入
+*/
+template <typename T> Rank Vector<T>::insert(Rank r, T const& e){
+    expand();   //如有必要，扩容
+    for (int i = _size; i > r; i--){ 
+        _elem[i] = _elem[i-1];   //从 最后一个 到 第r个 把每个元素后移一位
+        _elem[r] = e;
+        _size++;    //总体数据规模 +1
+    }
+    return r;  
+}
+
+
+/*-------------------------------------------------------
+* 函数名称：remove(Rank lo, Rank hi)
+* 函数功能：区间删除函数接口
+*/
+template <typename T> Rank Vector<T>::remove(Rank lo, Rank hi){  //返回删除区间的元素个数
+    if (lo == hi) return 0; //删除区间为空，无元素被删除,直接退出
+    while(hi < _size) _elem[lo++] = _elem[hi++];   //把区间后面的元素挨个复制到前面位置
+    _size -= hi - lo;   //规模减小
+    shrink();   //如有必要缩容量
+    return hi - lo;   
+}
+/*-------------------------------------------------------
+* 函数名称：remove(Rank r)
+* 函数功能：从区间remove() 重载的单元素删除接口
+*/
+template <typename T> T Vector<T>::remove(Rank r){   //默认插入到末尾
+    T e = _elem[r];  
+    remove(r, r+1);   //单元素删除
+    return e;         //返回被删除的元素
+}
+
+
+/*-------------------------------------------------------
+* 函数名称：deplicate()
+* 函数功能：向量去重
+*/
+template <typename T> int Vector<T>:: deduplicate(){
+
+    // //O(n^2)版本
+    // int oldSize = _size;  //记录原规模
+    // Rank i = 1;     //从第2个元素开始
+    // while(i < _size)   //从后向前，逐个检查
+    //     (find(_elem[i], 0, i) >= 0) ? remove(i) : i++;   //find找到返回索引（0 ~ i）,找不到返回 -1，这里remove()已经会修改 _size
+
+    // return oldSize - _size;  //返回被删去的数量
+
+    // O(n)版本
+    int p1 = 0,p2 = p1;
+    int oldSize = _size;
+    while(p2 < _size - 1 && p1<=p2){
+        p2++;
+        if (_elem[p2] != _elem[p1]) _elem[++p1] = _elem[p2];
+    }
+    remove(++p1,_size);       //区间删除
+    return oldSize - _size;   //返回被删去的数量
+}
+
+/*-------------------------------------------------------
+* 函数名称：traverse(void (*visit)(T&))
+* 函数功能：使用函数指针，遍历所有元素
+*/
+template <typename T> void Vector<T>::traverse(void (*visit)(T&)){   //利用函数指针，遍历所有元素
+    for (int i = 0; i < _size; i++) visit(_elem[i]);
+}
+
+/*-------------------------------------------------------
+* 函数名称：traverse(VST& visit)
+* 函数功能：使用向量模板类，遍历所有元素
+*/
+template <typename T> template <typename VST> void Vector<T>::traverse(VST& visit){   //利用函数对象，遍历所有元素
+    for (int i= 0; i < _size; i++) visit(_elem[i]);
+}
 
 
 

@@ -3,16 +3,25 @@
 #define ll long long
 using namespace std;
 
+
+void print(int &a)
+{
+    cout << a << " ";
+}
+
 int main() 
 {
     iyan_vector<int> v;
+    for (int i = 0; i < 5; i++)
+    {
+        v.push_Back(i/2);
+        cout << v[i] << " ";
+    }
+    cout << endl;
+    v.deduplicate();
+    v.traverse(print);
+
+    cout<< endl <<v.size() << endl;
     
-    v[0] = 1;
-    v[1] = 1;
 
-    int x = v.size();
-    cout << x<<endl;
-
-    cout<<eq(v[0], v[1])<<endl;
-    return 0;
 }
