@@ -20,6 +20,10 @@ int main()
     cout << endl;
     v.deduplicate();
     v.traverse(print);
+    increase(v);
+
+    cout << endl;
+    v.traverse(print);
 
     cout<< endl <<v.size() << endl;
     

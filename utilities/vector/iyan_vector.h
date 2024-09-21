@@ -239,17 +239,23 @@ template <typename T> T Vector<T>::remove(Rank r){   //默认插入到末尾
 * 函数名称：deplicate()
 * 函数功能：向量去重
 */
-template <typename T> int Vector<T>:: deduplicate(){
+template <typename T> int Vector<T>:: deduplicate()
+{
 
-    // //O(n^2)版本
-    // int oldSize = _size;  //记录原规模
-    // Rank i = 1;     //从第2个元素开始
-    // while(i < _size)   //从后向前，逐个检查
-    //     (find(_elem[i], 0, i) >= 0) ? remove(i) : i++;   //find找到返回索引（0 ~ i）,找不到返回 -1，这里remove()已经会修改 _size
 
-    // return oldSize - _size;  //返回被删去的数量
+    //对于无序的O(n^2)版本
+    int oldSize = _size;  //记录原规模
+    Rank i = 1;     //从第2个元素开始
+    while(i < _size)   //从后向前，逐个检查
+        (find(_elem[i], 0, i) >= 0) ? remove(i) : i++;   //find找到返回索引（0 ~ i）,找不到返回 -1，这里remove()已经会修改 _size
 
-    // O(n)版本
+    return oldSize - _size;  //返回被删去的数量
+
+}
+
+template <typename T> int Vector<T>::uniquify()
+{
+    //对于有序向量的 O(n)版本
     int p1 = 0,p2 = p1;
     int oldSize = _size;
     while(p2 < _size - 1 && p1<=p2){
@@ -257,6 +263,7 @@ template <typename T> int Vector<T>:: deduplicate(){
         if (_elem[p2] != _elem[p1]) _elem[++p1] = _elem[p2];
     }
     remove(++p1,_size);       //区间删除
+    shrink();
     return oldSize - _size;   //返回被删去的数量
 }
 
@@ -273,8 +280,67 @@ template <typename T> void Vector<T>::traverse(void (*visit)(T&)){   //利用函
 * 函数功能：使用向量模板类，遍历所有元素
 */
 template <typename T> template <typename VST> void Vector<T>::traverse(VST& visit){   //利用函数对象，遍历所有元素
-    for (int i= 0; i < _size; i++) visit(_elem[i]);
+    for (int i= 0; i < _size; i++) visit(_elem[i]);   //visit函数对象，在遍历中运算
 }
+
+
+
+/*-------------------------------------------------------
+* 函数名称：increase(Vector<T>&)
+* 函数功能 递增一个T类对象中的元素
+*/
+template <typename T> struct Increase
+{ virtual void operator()(T& e) const { ++e;}  };  //重载Increase的（），为++；
+
+
+template <typename T> void increase(Vector<T>& V)
+{ 
+    Increase<T> increaser;
+    V.traverse(increaser);   //调用traverse，遍历所有元素，调用重载的（）
+}
+// // 有问题的 increase 函数
+// template <typename T> void increase(Vector<T>& V)
+// { V.traverse(Increase<T>()); };  // 错误：传递了临时对象
+
+
+
+/*-------------------------------------------------------
+* 函数名称：disordered()
+* 函数功能：整体有序性甄别
+*/
+template <typename T> int Vector<T>::disordered() const{
+    int n = 0;  
+    for (int i = 1; i < _size; i++)
+        if (_elem[i-1] > _elem[i]) n++;
+    return n;    //返回逆序数,若有序泽则   n = 0
+}
+
+
+
+//查找
+
+/*-------------------------------------------------------
+* 函数名称：binSearch(T*A, T const& e, Rank lo, Rank hi)
+* 函数功能：二分查找
+*/
+template<typename T> static Rank binSearch(T*A, T const& e, Rank lo, Rank hi)   //向量 A，查找元素e， 区间 [lo,hi）
+{
+    if(A.disordered()) throw "array not sorted"; return 0;
+    while(lo < hi){
+        Rank mi  = (lo + hi)>>1;
+        if(e < A[mi]){hi = mi;}
+        else if (A[mi] < e){lo = mi + 1;}
+        else return mi;
+    }
+
+    return -1;
+} 
+
+
+
+
+
+
 
 
 
