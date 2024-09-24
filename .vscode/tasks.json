@@ -22,7 +22,8 @@
                 "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-I${workspaceFolder}"
+                "-I",
+                "${workspaceFolder}",
             ],
             "options": {
                 "cwd": "${fileDirname}"
