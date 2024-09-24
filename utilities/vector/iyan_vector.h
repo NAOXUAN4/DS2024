@@ -346,14 +346,15 @@ template<typename T> static Rank binSearch(T*A, T const& e, Rank lo, Rank hi)   
  * @param int ID 选取排序算法：1：冒泡排序；2：选择排序；3：归并排序；4：堆排序；5（默认）：快速排序 
  * @note 
 **/
-template <typename T> void Vector<T>::sort(Rank lo, Rank hi,int ID)
+template <typename T> void Vector<T>::sort(Rank lo, Rank hi, int ID)
 {
-    switch (ID){
+   
+    switch(ID){
         case 1: bubbleSort(lo, hi);break;
-        case 2: selectionSort(lo, hi);break;
+        // case 2: selectionSort(lo, hi);break;
         case 3: mergeSort(lo, hi);break;
-        case 4: heapSort(lo, hi);break;
-        default: quickSort(lo,hi); break;
+        // case 4: heapSort(lo, hi);break;
+        default:  break;    //quickSort(lo,hi);
     }
 
 }
@@ -385,19 +386,19 @@ template <typename T> bool Vector<T>::bubble(Rank lo, Rank hi)
 
 /**
  * ----------------------------------------------------------
- * @name 
- * @brief 
- * @param 
- * @return 
- * @author 
- * @date 
+ * @name mergeSort(Rank lo, Rank hi)
+ * @brief 归并排序
+ * @param Rank lo
+ * @param Rank hi
  * @note 
 **/
 
 template <typename T> void Vector<T>:: mergeSort(Rank lo,Rank hi)  //[lo,hi)
 {
-    if(hi-lo<2){ return; }    //递归到了最小单元
+    if( hi - lo < 2){ return;}    //递归到了最小单元
     int mi = (hi + lo) >>1;   //对分
+    
+
     mergeSort(lo,mi);  //[lo,mi) 递归
     mergeSort(mi,hi);
     merge(lo,mi,hi);  //合并
@@ -405,19 +406,20 @@ template <typename T> void Vector<T>:: mergeSort(Rank lo,Rank hi)  //[lo,hi)
 }
 
 
-template <typename T> void Vector<T>:: merge(Rank hi,Rank mi,Rank lo)
+template <typename T> void Vector<T>:: merge(Rank lo,Rank mi,Rank hi)
 {
     T*A = _elem + lo; //合并之后存储结果的首地址
-    T*B_1 = new(mi-lo);T*B_2 = _elem + mi;   //临时地址存储子向量（当然也可以把最终合并结果存一个临时向量，核心就是不要让合并的结果覆盖到子向量就行）
-    for (Rank i = 0; i < mi-lo; B_1[i] = A[i++]) //复制前子向量
     int lb_1 = mi - lo, lb_2 = hi - mi;   //子向量长度
-    for (Rank i = 0;j = 0 ,k = 0; (j<lb_1) || (k<l_b2);)
+    T*B_1 = new T[lb_1];
+    T*B_2 = _elem + mi;   //临时地址存储子向量（当然也可以把最终合并结果存一个临时向量，核心就是不要让合并的结果覆盖到子向量就行）
+    for (Rank i = 0; i < lb_1; i++) //复制前子向量
+    { B_1[i] = A[i]; }
+   
+    for (Rank i = 0,j = 0 ,k = 0; (j < lb_1) || (k < lb_2);)
     {
         if((j<lb_1) && (!(k<lb_2) || (B_1[j]<B_2[k]))) A[i++] = B_1[j++];     //两种情况：1.两指针都未走完，则比大小，2：有一个走完，就直接走另一个
         if((k<lb_2) && (!(j<lb_1) || (B_2[k]<B_1[j]))) A[i++] = B_2[k++];
     }
-
-    delete [] B_1;
 }
 
     

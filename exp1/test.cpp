@@ -14,18 +14,18 @@ int main()
     iyan_vector<int> v;
     for (int i = 0; i < 5; i++)
     {
-        v.push_Back(i/2);
-        cout << v[i] << " ";
+        v.push_Back(rand()%10);
     }
     cout << endl;
-    v.deduplicate();
-    v.traverse(print);
-    increase(v);
-
-    cout << endl;
+    // v.deduplicate();
     v.traverse(print);
 
-    cout<< endl <<v.size() << endl;
+    cout<<endl<<v.size()<<endl;
+
+    v.sort(0,5,1);
+
+    v.traverse(print);
+
     
 
 }
