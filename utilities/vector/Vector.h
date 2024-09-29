@@ -1,10 +1,12 @@
 #ifndef _VECTOR_H
 #define _VECTOR_H
-#define Vector iyan_vector
+
 using namespace std;
 
 typedef int Rank;          // 秩
 #define DEFAULT_CAPACITY 3 // 默认初始容量
+
+// #define Vector iyan_vector
 
 template <typename T>
 class Vector
@@ -62,9 +64,7 @@ public:
     Rank find(T const &e, Rank lo, Rank hi) const;            // 无序向量区间查找
 
     Rank search(T const &e) const
-    {
-        return search(0 >= _size) ? -1 : search(e, 0, _size);
-    } // 向量整体查找
+    { return (0 >= _size) ? -1 : search(e, 0, _size); } // 向量整体查找
     Rank search(T const &e, Rank lo, Rank hi) const; // 向量区间查找 lo -> hi
 
     // 可访问接口
@@ -74,12 +74,12 @@ public:
     T remove(Rank r);             // remove函数,删除秩为r的元素
     int remove(Rank lo, Rank hi); // 重载remove函数,删除区间[lo,hi)的元素
 
-    Rank insert(Rank r, T const &e);                     // 插入元素e，在秩为r的首地址插入
-    Rank insert(T const &e) { return insert(_size, e); } // 重载insert函数，当唯一参数时，默认在末尾插入
+    Rank insert(Rank r, T const &e);                     // 插入元素e，在秩为r的首地址插入    Rank insert(T const &e) { return insert(_size, e); } // 重载insert函数，当唯一参数时，默认在末尾插入
 
     void sort(Rank lo, Rank hi, int ID); // 区间排序  lo -> hi
-    void sort() { sort(0, _size); }      // 整体排序
+    void sort(int ID) { sort(0, _size, ID); }      // 整体排序,默认归并
 
+    
     void unsort(Rank lo, Rank hi);      // 区间打乱， lo -> hi
     void unsort() { unsort(0, _size); } // 整体打乱
 
@@ -181,16 +181,6 @@ void Vector<T>::shrink()
     delete[] oldElem;          // 释放中介空间
 }
 
-/*------------------------------------------------------
-函数名称：premute(Vector<T>& V)
-函数功能：置乱函数核心
-*/
-template <typename T>
-void premute(Vector<T> &V)
-{                                      // 参数：直接填入待排序向量名称，即为一个vector类型的应引用
-    for (int i = V._size; i > 0; i--)  // 从后向前
-        swap(V[i - 1], V[rand() % i]); // 把当前索引的元素和随机索引的元素交换  随机原理：rand() % i 永不超过 i，即为 0 ~ i-1
-}
 
 /*------------------------------------------------------
 函数名称：unsort(Rank lo, Rank hi)
@@ -199,7 +189,10 @@ void premute(Vector<T> &V)
 template <typename T>
 void Vector<T>::unsort(Rank lo, Rank hi)
 {
-    premute(Vector<T>(_elem + lo, hi - lo)); // 对核心传入待置乱的区间组成的子函数  参数：区间首地址，子区间Rank
+    T *V = _elem + lo;
+    while (lo < --hi)
+        swap(V[lo++], V[rand() % (hi - lo + 1) + lo]); 
+    
 }
 
 /*------------------------------------------------------
@@ -224,8 +217,7 @@ static bool eq(T &a, T &b) { return a == b; }
 template <typename T>
 Rank Vector<T>::find(T const &e, Rank lo, Rank hi) const
 { // 要查找的元素引用（可以是结构体等较大的数据类型，用引用节省空间），查找区间
-    while ((lo < hi--) && (e != _elem[hi]))
-        ;      // 从hi末尾向前查找
+    while ((lo < hi--) && (e != _elem[hi]));      // 从hi末尾向前查找
     return hi; // 返回查找到的索引，若无，返回-1
 }
 
@@ -239,10 +231,11 @@ Rank Vector<T>::insert(Rank r, T const &e)
     expand(); // 如有必要，扩容
     for (int i = _size; i > r; i--)
     {
+        
         _elem[i] = _elem[i - 1]; // 从 最后一个 到 第r个 把每个元素后移一位
-        _elem[r] = e;
-        _size++; // 总体数据规模 +1
     }
+    _elem[r] = e;
+    _size++; // 总体数据规模 +1
     return r;
 }
 
@@ -373,9 +366,7 @@ int Vector<T>::disordered() const
 template <typename T>
 static Rank binSearch(T *A, T const &e, Rank lo, Rank hi) // 向量 A，查找元素e， 区间 [lo,hi）
 {
-    if (A.disordered())
-        throw "array not sorted";
-    return 0;
+    
     while (lo < hi)
     {
         Rank mi = (lo + hi) >> 1;
@@ -393,6 +384,23 @@ static Rank binSearch(T *A, T const &e, Rank lo, Rank hi) // 向量 A，查找�
 
     return -1;
 }
+
+/**
+ * ----------------------------------------------------------
+ * @name search(T const& e, Rank lo, Rank hi)
+ * @brief  查找函数接口 
+ * @param T const& e 待查找元素
+ * @param Rank lo 起始位置
+ * @param Rank hi 结束位置
+ * @return 返回二分查找
+ * @note 
+**/
+template<typename T> Rank Vector<T>::search(T const& e,Rank lo,Rank hi) const {
+    return binSearch(_elem,e,lo,hi);
+} 
+
+
+
 
 /**
  * ----------------------------------------------------------
@@ -495,5 +503,9 @@ void Vector<T>::merge(Rank lo, Rank mi, Rank hi)
             A[i++] = B_2[k++];
     }
 }
+
+
+
+
 
 #endif
