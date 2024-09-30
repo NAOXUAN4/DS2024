@@ -422,6 +422,7 @@ void Vector<T>::sort(Rank lo, Rank hi, int ID)
         break;
     // case 2: selectionSort(lo, hi);break;
     case 3:
+    
         mergeSort(lo, hi);
         break;
     // case 4: heapSort(lo, hi);break;
@@ -441,8 +442,7 @@ void Vector<T>::sort(Rank lo, Rank hi, int ID)
 template <typename T>
 void Vector<T>::bubbleSort(Rank lo, Rank hi)
 {
-    while (!bubble(lo, hi--))
-        ;
+    while (!bubble(lo, hi--));
 } // 从前往后进行起泡交换
 
 template <typename T>
@@ -483,25 +483,43 @@ void Vector<T>::mergeSort(Rank lo, Rank hi) //[lo,hi)
     merge(lo, mi, hi); // 合并
 }
 
-template <typename T>
-void Vector<T>::merge(Rank lo, Rank mi, Rank hi)
-{
-    T *A = _elem + lo;                  // 合并之后存储结果的首地址
-    int lb_1 = mi - lo, lb_2 = hi - mi; // 子向量长度
-    T *B_1 = new T[lb_1];
-    T *B_2 = _elem + mi;            // 临时地址存储子向量（当然也可以把最终合并结果存一个临时向量，核心就是不要让合并的结果覆盖到子向量就行）
-    for (Rank i = 0; i < lb_1; i++) // 复制前子向量
-    {
-        B_1[i] = A[i];
-    }
+// template <typename T>
+// void Vector<T>::merge(Rank lo, Rank mi, Rank hi)
+// {
+//     T *A = _elem + lo;                  // 合并之后存储结果的首地址
+//     int lb_1 = mi - lo, lb_2 = hi - mi; // 子向量长度
+//     T *B_1 = new T[lb_1];
+//     T *B_2 = _elem + mi;            // 临时地址存储子向量（当然也可以把最终合并结果存一个临时向量，核心就是不要让合并的结果覆盖到子向量就行）
+//     for (Rank i = 0; i < lb_1; i++) // 复制前子向量
+//     {
+//         B_1[i] = A[i];
+//     }
 
-    for (Rank i = 0, j = 0, k = 0; (j < lb_1) || (k < lb_2);)
-    {
-        if ((j < lb_1) && (!(k < lb_2) || (B_1[j] < B_2[k])))
-            A[i++] = B_1[j++]; // 两种情况：1.两指针都未走完，则比大小，2：有一个走完，就直接走另一个
-        if ((k < lb_2) && (!(j < lb_1) || (B_2[k] < B_1[j])))
-            A[i++] = B_2[k++];
+//     for (Rank i = 0, j = 0, k = 0; (j < lb_1) || (k < lb_2);)
+//     {
+//         if ((j < lb_1) && (!(k <= lb_2) || (B_1[j] < B_2[k])))
+//             A[i++] = B_1[j++]; // 两种情况：1.两指针都未走完，则比大小，2：有一个走完，就直接走另一个
+//         if ((k < lb_2) && (!(j <= lb_1) || (B_2[k] < B_1[j])))
+//             A[i++] = B_2[k++];
+//     }
+// }
+
+template <typename T>
+void Vector<T>::merge(Rank lo, Rank mi, Rank hi) {
+    T* A = _elem + lo;
+    int lb = mi - lo;
+    T* B = new T[lb];
+    for (Rank i = 0; i < lb; i++) B[i] = A[i]; // 复制前子向量
+    
+    int lc = hi - mi;
+    T* C = _elem + mi; // 后子向量C[0, lc)就地
+    
+    for (Rank i = 0, j = 0, k = 0; j < lb; ) { // 归并：反复从B和C中取出更小者
+        if (k >= lc || B[j] < C[k]) A[i++] = B[j++];
+        else A[i++] = C[k++];
     }
+    
+    delete [] B; // 释放临时空间B
 }
 
 
