@@ -276,10 +276,13 @@ int Vector<T>::deduplicate()
 
     // 对于无序的O(n^2)版本
     int oldSize = _size;                               // 记录原规模
-    Rank i = 1;                                        // 从第2个元素开始
-    while (i < _size)                                  // 从后向前，逐个检查
-        (find(_elem[i], 0, i) >= 0) ? remove(i) : i++; // find找到返回索引（0 ~ i）,找不到返回 -1，这里remove()已经会修改 _size
-
+    Rank i = 1;     
+    while (i < _size) {
+        if (find(_elem[i], 0, i) < 0) // 从第2个元素开始
+            i++;     // 从后向前，逐个检查
+        else
+            remove(i);                                     
+    }        
     return oldSize - _size; // 返回被删去的数量
 }
 

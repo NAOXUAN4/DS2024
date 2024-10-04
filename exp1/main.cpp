@@ -144,9 +144,13 @@ int main(){
     complex_vector.traverse(print);
     cout<<endl;
 
-    //cout<<"\n唯一化： \n";
+    cout<<"\n唯一化: \n";
+    complex_vector.deduplicate();
+    complex_vector.traverse(print);
+    cout<<endl;
 
     Vector<Complex> tosort_vector(complex_vector);
+    
 
     cout<<"\n排序: \n";
     double time_b = clock_v([&]() { 
