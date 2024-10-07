@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "utilities/vector/Vector.h"
+#include "utilities/vector/Vector.cpp"
 #include <chrono>
 
 #define MAX_SIZE 10
@@ -11,7 +11,7 @@ class Complex {  //定义复数类
         double real;
         double imag;
         double module;
-        
+
 
     Complex() : real(0), imag(0), module(0) {}  // 默认构造函数
     Complex(double real, double imag) {
