@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "utilities/vector/Vector.cpp"
+#include "utilities/vector/Vector.hpp"
 #include <chrono>
 
 #define MAX_SIZE 10
@@ -43,8 +43,6 @@ class Complex {  //定义复数类
 };
 
 
-
-
 template<typename Func>
 double clock_v(Func func) {
     auto start = std::chrono::high_resolution_clock::now();
@@ -55,15 +53,13 @@ double clock_v(Func func) {
     
 }
 
-
-
 void print(Complex &a)   //输出函数
 {
     cout<<a.real<<"+" << a.imag << "i   ";
 }
 
 
-template <typename T>
+template <typename T>  //区间查找
 void COMPLEX_interval_Search(Complex complex_min,Complex complex_max,Vector<T> &parent,Vector<T>& child)
 {
     int min = parent.search(complex_min); int max = parent.search(complex_max);
@@ -75,19 +71,12 @@ void COMPLEX_interval_Search(Complex complex_min,Complex complex_max,Vector<T> &
     
 }
 
-
-
-
-
 int main(){
 
     int size_v;
     cout<<"复数向量实验"<<endl;
     cout<<"输入复数向量数量：";
     cin>>size_v;
-
-
-
 
     srand(static_cast<unsigned int>(time(nullptr)));  // 使用当前时间作为种子
 
@@ -116,7 +105,6 @@ int main(){
     cout<<endl;
 
 
-    
     cout<<"查找： \n";
     int chose_index = rand()%num;
     cout<<"choose :" <<complex_vector[chose_index].real<<"+"<<complex_vector[chose_index].imag<<"i"<<endl;
@@ -164,8 +152,6 @@ int main(){
 
     cout<<"乱序冒泡排序时间："<<time_b<<" us   "<< "乱序归并排序时间："<< time_m<<" us"<<endl;
     
-    
-
     time_b = clock_v([&]() { 
         complex_vector.sort(1);   //使用匿名函数传入
     });
@@ -197,7 +183,6 @@ int main(){
     complex_vector.traverse(print);
     cout<<endl;
 
-
     cout<<"\n区间查找: \n";
     Complex min = complex_vector[rand()%(complex_vector.size()/2)];
     Complex max = complex_vector[complex_vector.size()/2 + rand()%(complex_vector.size()/2)];
@@ -207,9 +192,6 @@ int main(){
     COMPLEX_interval_Search(min,max,complex_vector, interval_vector);
     interval_vector.traverse(print);
     cout<<endl;
-
-
-
 
     return 0;
 }

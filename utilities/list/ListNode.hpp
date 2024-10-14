@@ -1,4 +1,9 @@
+#ifndef LISTNODE_H
+#define LISTNODE_H
+
 typedef int Rank;
+#include <cstddef>
+
 #define ListNodePosi(T) ListNode<T>*  //定义链表节点指针类型
 
 template <typename T> struct ListNode{  //双向链表做列表
@@ -13,3 +18,5 @@ template <typename T> struct ListNode{  //双向链表做列表
     ListNodePosi(T) insertAsPred(T const& e);   //插入前驱
     ListNodePosi(T) insertAsSucc(T const& e);   //插入后继
 };
+
+#endif
