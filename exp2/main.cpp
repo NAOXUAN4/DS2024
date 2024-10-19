@@ -121,7 +121,18 @@ int main()
 {
 
     cout<<"\n1) 计算\n";
-    cout<<"输入的字符串为："<<cal_str<<endl;
+    cout<<"输入的字符串为：";
+    char cal_str[100];
+
+    // 使用 fgets 读取用户输入的一行
+    std::cout << "请输入计算表达式: ";
+    if (fgets(cal_str, sizeof(cal_str), stdin)) {
+        // 去掉输入字符串末尾的换行符
+        size_t len = strlen(cal_str);
+        if (len > 0 && cal_str[len - 1] == '\n') {
+            cal_str[len - 1] = '\0';
+        }
+    }
     cout<<"计算结果为："<<evaluate(cal_str)<<endl;
 
     cout<<"\n2) 柱体面积\n";

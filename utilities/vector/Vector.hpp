@@ -54,7 +54,7 @@ public:
     Vector(Vector<T> const &V) { copyFrom(V._elem, 0, V._size); }               // 向量整体复制
 
     // 析构函数
-    //~Vector() { delete[] _elem; } // 释放储存空间
+    ~Vector() { delete[] _elem; } // 释放储存空间
 
     // 只读访问接口
     void push_Back(T const &e);           // 添加元素
