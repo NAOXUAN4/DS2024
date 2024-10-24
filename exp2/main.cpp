@@ -160,6 +160,9 @@ int main()
         cout<<"MAX: "<<largestRectangleArea(Z)<<endl;
         
     }
+
+    system("pause");
+    return 0;
     
 
 

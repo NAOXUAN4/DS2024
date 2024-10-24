@@ -193,5 +193,7 @@ int main(){
     interval_vector.traverse(print);
     cout<<endl;
 
+
+    system("pause");
     return 0;
 }
