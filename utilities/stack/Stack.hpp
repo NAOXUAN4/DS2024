@@ -27,6 +27,7 @@ int divide(const char exp[], int lo, int hi){
     {
         if(exp[mi] == ')') crc--; if(exp[mi] == '(') crc++;
     }
+    return mi;
 }
 
 

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-char* cal_str = "(1/4)*4/(1/4)*4";
+// char* cal_str = "(1/4)*4/(1/4)*4";
 
 void print(int n)
 {
@@ -17,7 +17,7 @@ void readNumber(char*& S, Stack<float>& opnd) { //从S中读入一个操作数�
         n = n * 10 + *S++ - '0'; //将新读入的数字“压”入操作数
     opnd.push(n); //将操作数入栈
 }
-Operator charToOperator(char op) {
+Operator charToOperator(char op) { //字符串运算符映射表，映射成int不好吗？为什么要映射为原算符再typedef
     switch (op) {
         case '+': return ADD;
         case '-': return SUB;
@@ -43,6 +43,7 @@ T calcu(T opnd1, char op, T opnd2) { //返回计算结果
     return op == '+' ? opnd1 + opnd2 :
         op == '-' ? opnd1 - opnd2 :
         op == '*' ? opnd1 * opnd2 :
+        op == '^' ? pow(opnd1, opnd2) :
         op == '/' ? opnd1 / opnd2 : 0;
 }
 
@@ -59,7 +60,6 @@ T calcu(T opnd1, char op) {
     }
     return T(0);
 }
-
 
 float evaluate(char* S) { //对（已剔除白空格癿）表达式S求值，幵转换为逆波兰式RPN
     Stack<float> opnd; Stack<char> optr; //运算数栈、运算符栈
@@ -85,7 +85,6 @@ float evaluate(char* S) { //对（已剔除白空格癿）表达式S求值，幵
                         opnd.push(calcu(op, pOpnd)); //实斲一元计算，结枅入栈
                     } else { //对亍其它（二元）运算符
                         float pOpnd2 = opnd.pop(), pOpnd1 = opnd.pop(); 
-                       
                         opnd.push(calcu(pOpnd1, op, pOpnd2)); //实斲二元计算，结枅入栈
                     }
                     break;
@@ -102,7 +101,7 @@ float evaluate(char* S) { //对（已剔除白空格癿）表达式S求值，幵
 int largestRectangleArea(Vector<int>& heights) {
     stack<int> S;
     int max_area = 0;
-    heights.push_Back(0); // 添加一个哨兵，方便处理最后一个柱子
+    heights.push_Back(0); //哨兵
 
     for (int i = 0; i < heights.size(); ++i) {
         while (!S.empty() && heights[S.top()] > heights[i]) {
@@ -158,7 +157,7 @@ int main()
         Z.traverse(print);
         cout<<endl;
 
-        cout<<largestRectangleArea(Z)<<endl;
+        cout<<"MAX: "<<largestRectangleArea(Z)<<endl;
         
     }
     
