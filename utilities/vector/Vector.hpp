@@ -56,6 +56,7 @@ public:
     // 析构函数
     ~Vector() { delete[] _elem; } // 释放储存空间
 
+
     // 只读访问接口
     void push_Back(T const &e);           // 添加元素
     Rank size() const { return _size; }   // 查询规模
