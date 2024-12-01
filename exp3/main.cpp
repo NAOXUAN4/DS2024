@@ -26,7 +26,7 @@ template <typename T>
 struct BinNode {
     T data;
     BinNode<T>* left;
-    BinNode<T>* right;
+    BinNode<T>* right;   
     BinNode<T>* parent;
     
     BinNode() : left(nullptr), right(nullptr), parent(nullptr) {}
