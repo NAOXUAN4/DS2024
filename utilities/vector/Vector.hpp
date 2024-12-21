@@ -71,7 +71,7 @@ public:
     Rank search(T const &e, Rank lo, Rank hi) const; // 向量区间查找 lo -> hi
 
     // 可访问接口
-    T &operator[](Rank r) const;          // 重载索引运算符，使得向量可以用类似数组的形式访问
+    T &operator[](Rank r);          // 重载索引运算符，使得向量可以用类似数组的形式访问
     Vector &operator=(Vector<T> const &); // 重载赋值运算符，赋值直接调用克隆向量
 
     T remove(Rank r);             // remove函数,删除秩为r的元素
@@ -141,10 +141,13 @@ Vector<T> &Vector<T>::operator=(Vector<T> const &V)
 函数功能：重载[]运算符
 */
 template <typename T>
-T &Vector<T>::operator[](Rank r) const
+T &Vector<T>::operator[](Rank r)
 { // ！！！ T&指定索引的元素，使得可以通过改变如：v[i]来直接改变向量元素，而不只是一个拷贝
+    _size = std::max(_size, r + 1);
+    expand();
     if (r < 0 || r >= _size)
         throw std::out_of_range("Index out of range");
+    
     return _elem[r]; // 返回对应索引的元素
 }
 
@@ -155,7 +158,7 @@ T &Vector<T>::operator[](Rank r) const
 template <typename T>
 void Vector<T>::expand()
 { // 扩容函数
-    if (_size < _capacity)
+    if (_size <= _capacity)
         return; // 容量未满，无需扩容
     if (_capacity < DEFAULT_CAPACITY)
         _capacity = DEFAULT_CAPACITY; // 如果当前空间小于默认空间，扩容到默认大小
